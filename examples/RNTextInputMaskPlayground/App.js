@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
   Text,
+  Button,
   ScrollView,
   KeyboardAvoidingView,
 } from 'react-native';
@@ -12,10 +13,24 @@ import {
 } from 'react-native-text-input-mask';
 
 const App = () => {
+  const [ref, setRef] = useState(null);
+  const [value, setValue] = useState(value);
+
+  const saveInputRef = ref => setRef(ref);
+
+  const getInputValue = () => {
+    if (ref) {
+      console.log(ref.getValue());
+    }
+  };
+
+  const onChangeText = value => console.warn(value);
+
   const myCustomMask = new CustomMask({
     name: 'myCustomMask',
     mask: '(000) - 000',
   });
+
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView behavior="padding">
@@ -45,7 +60,10 @@ const App = () => {
             customMask={myCustomMask}
             keyboardType="numeric"
             style={styles.input}
+            ref={saveInputRef}
+            onChangeText={onChangeText}
           />
+          <Button title="GetValue" onPress={getInputValue} />
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>

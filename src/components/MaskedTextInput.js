@@ -34,9 +34,10 @@ class MaskedTextInput extends PureComponent {
   componentDidMount() {
     const { value } = this.state;
     // Updates/Set the state value with masked value.
-    return this.handleChangeText(value);
+    return this.handleChangeText(value, false);
   }
 
+  // eslint-disable-next-line class-methods-use-this
   onFieldLeave(callback) {
     // Remove unused mask underscores
     // Updates the "isFocused" state
@@ -45,15 +46,23 @@ class MaskedTextInput extends PureComponent {
     }
   }
 
-  handleChangeText(text) {
+  getValue() {
+    const { value, mask } = this.state;
+    return mask.getValue(value);
+  }
+
+  handleChangeText(text, notify = true) {
     const { mask, value: prevValue, cursorSelection } = this.state;
     const { onChangeText } = this.props;
     this.setState({
       value: mask.maskValue(text, prevValue, cursorSelection),
     }, () => {
       this.updateCursor();
-      if (typeof onChangeText === 'function') {
-        onChangeText(text);
+      if (typeof onChangeText === 'function' && notify) {
+        const { value } = this.state;
+        if (value !== prevValue) {
+          onChangeText(this.getValue(value));
+        }
       }
     });
   }

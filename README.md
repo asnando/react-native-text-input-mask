@@ -34,6 +34,10 @@ const myComponent = () => {
 
 <b>Note:</b><i> All the other properties from native ```TextInput``` are supported. Check the React Native TextInput component reference for futher information.</i>
 
+# Methods
+## .getValue()
+Returns raw(unmasked) value string.
+
 # Supported Mask Types
 Currently supported mask types are: ```phone, cpf, cnpj```
 

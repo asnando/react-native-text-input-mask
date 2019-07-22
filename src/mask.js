@@ -151,9 +151,16 @@ const resolveMaskedValue = (mask, value, prevValue, cursorSelection) => {
   }
 };
 
+const getRawValue = value => value.replace(/(\W|_|\s)/g, '');
+
 class Mask {
   constructor({ name, mask }) {
     Object.assign(this, { name, mask });
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  getValue(value) {
+    return getRawValue(value);
   }
 
   maskValue(value = '', prevValue, cursorSelection = { start: 0, end: 0 }) {
