@@ -2,7 +2,7 @@ const removeOptionalMaskCharacters = mask => mask.replace(/\?/g, '');
 
 const containsCharacter = value => /[A-Za-z0-9]/.test(value);
 const containsUnderscore = value => /_/.test(value);
-const containsCharactersSeparatedByUnderscore = value => /[A-Za-z0-9]_[A-Za-z0-9]/.test(value);
+const containsCharactersSeparatedByUnderscore = value => /[A-Za-z0-9]_.*[A-Za-z0-9]/.test(value);
 
 const resolveRawMaskWithUnderscores = mask => (
   removeOptionalMaskCharacters(mask.replace(/(\d|\w)/g, '_'))
@@ -43,26 +43,26 @@ const whichIndexWasRemovedFromString = (value, prevValue) => {
   return deletedIndex;
 };
 
+const containsSpecialCharacters = value => /\W/.test(value);
+const containsOptionalCharacter = value => /\?/.test(value);
+
 // This will distribute every character or digit into the respectives respecting the
 // underscores from the mask configuration notation.
 const resolveMaskWithValue = (mask, value) => {
-  let valueIndex = 0;
-  let maskedValue = mask.split('').map((char) => {
-    if (/\W/.test(char)) {
-      return char;
+  const values = value.split('');
+  return mask.split('').map((maskChar) => {
+    if (containsOptionalCharacter(maskChar)) {
+      return null;
     }
-    valueIndex += 1;
-    if (
-      (value.charAt(valueIndex - 1) === '')
-      || (/\d/.test(char) && !/\d/.test(value.charAt(valueIndex - 1)))
-      || (containsCharacter(char) && !containsCharacter(value.charAt(valueIndex - 1)))
-    ) {
+    if (containsSpecialCharacters(maskChar)) {
+      return maskChar;
+    }
+    const valueChar = values.shift();
+    if (valueChar === null || typeof valueChar === 'undefined') {
       return '_';
     }
-    return value.charAt(valueIndex - 1);
-  }).join('');
-  maskedValue = removeOptionalMaskCharacters(maskedValue);
-  return maskedValue;
+    return valueChar;
+  }).filter(char => !!char).join('');
 };
 
 const resolveMaskedValue = (mask, value, prevValue, cursorSelection) => {
@@ -138,6 +138,8 @@ const resolveMaskedValue = (mask, value, prevValue, cursorSelection) => {
         return true;
       }).join('');
     } else if (containsCharactersSeparatedByUnderscore(maskedValue)) {
+      // Remove underscores after the new inputed character. It prevents
+      // the value from pushing to the right the rest of the input.
       maskedValue = removeMaskUnderscoresPreceededWithCharacters(maskedValue);
     }
 
