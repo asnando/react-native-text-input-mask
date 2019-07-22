@@ -1,47 +1,135 @@
 import React, { PureComponent } from 'react';
-import { TextInput } from 'react-native';
 import PropTypes from 'prop-types';
 import {
   StyledMaskedTextInput,
 } from './MaskedTextInput.styles';
+import Mask from '../mask';
+import masks from '../masks';
+
+const resolveMaskFromList = maskType => masks[maskType];
 
 const initialState = {
   value: '',
+  cursorSelection: {
+    start: -1,
+    end: -1,
+  },
 };
 
 class MaskedTextInput extends PureComponent {
   constructor(props) {
     super(props);
+    const { value, maskType, customMask } = props;
+    const useMask = customMask || resolveMaskFromList(maskType);
+    if (!useMask) {
+      throw new Error('Could not detect which mask to use.');
+    }
     this.state = {
       ...initialState,
-      value: props.value || initialState.value,
+      value: value || initialState.value,
+      mask: useMask,
     };
   }
 
-  handleChangeText(text) {
-    console.log('handleChangeText');
-    // Update the text value in the state.
-    this.setState({ value: text });
+  componentDidMount() {
+    const { value } = this.state;
+    // Updates/Set the state value with masked value.
+    return this.handleChangeText(value);
   }
 
-  handleSelectionChange() {
-    console.log('handleSelectionChange');
+  onFieldLeave(callback) {
+    // Remove unused mask underscores
+    // Updates the "isFocused" state
+    if (typeof callback === 'function') {
+      callback();
+    }
+  }
+
+  handleChangeText(text) {
+    const { mask, value: prevValue, cursorSelection } = this.state;
+    const { onChangeText } = this.props;
+    this.setState({
+      value: mask.maskValue(text, prevValue, cursorSelection),
+    }, () => {
+      this.updateCursor();
+      if (typeof onChangeText === 'function') {
+        onChangeText(text);
+      }
+    });
+  }
+
+  handleSelectionChange({ nativeEvent: { selection } }) {
+    this.setState({
+      cursorSelection: selection,
+    });
   }
 
   handleFocus() {
-    console.log('handleFocus');
+    const { onFocus } = this.props;
+    // Add unused mask underscores
+    // Updates the "isFocused" state
+    this.updateCursor();
+    if (typeof onFocus === 'function') {
+      onFocus();
+    }
   }
 
   handleBlur() {
-    console.log('handleBlur');
+    const { onBlur } = this.props;
+    return this.onFieldLeave(() => {
+      if (typeof onBlur === 'function') {
+        onBlur();
+      }
+    });
   }
 
   handleSubmitEditing() {
-    console.log('handleSubmitEditing');
+    const { onSubmitEditing } = this.props;
+    return this.onFieldLeave(() => {
+      if (typeof onSubmitEditing === 'function') {
+        onSubmitEditing();
+      }
+    });
+  }
+
+  // Updates the input text cursor to the first empty _ (underscore) position.
+  updateCursor() {
+    const { textInputRef } = this;
+    const { value } = this.state;
+
+    let selectionStart = value.length;
+
+    if (/_/.test(value)) {
+      selectionStart = value.indexOf('_');
+    }
+
+    const selectionEnd = selectionStart;
+
+    const updatedCursorSelection = {
+      start: selectionStart,
+      end: selectionEnd,
+    };
+
+    return this.setState({
+      cursorSelection: updatedCursorSelection,
+    }, () => {
+      // ! Could make it change cursor selection only using setTimeout 😞.
+      setTimeout(() => {
+        textInputRef.setNativeProps({
+          selection: updatedCursorSelection,
+        });
+      });
+    });
+  }
+
+  saveTextInputRef(ref) {
+    this.textInputRef = ref;
   }
 
   render() {
-    const { value } = this.state;
+    const {
+      value,
+    } = this.state;
     const {
       placeholder,
       keyboardType,
@@ -50,6 +138,8 @@ class MaskedTextInput extends PureComponent {
     } = this.props;
     return (
       <StyledMaskedTextInput
+        {...this.props}
+        ref={(...args) => this.saveTextInputRef(...args)}
         value={value}
         placeholder={placeholder}
         keyboardType={keyboardType}
@@ -60,7 +150,7 @@ class MaskedTextInput extends PureComponent {
         onFocus={(...args) => this.handleFocus(...args)}
         onBlur={(...args) => this.handleBlur(...args)}
         onSubmitEditing={(...args) => this.handleSubmitEditing(...args)}
-        clearButtonMode="always"
+        clearButtonMode="while-editing"
       />
     );
   }
@@ -73,6 +163,12 @@ MaskedTextInput.defaultProps = {
   secureTextEntry: false,
   maxLength: null,
   maskType: null,
+  customMask: null,
+  // Native TextInput events
+  onChangeText: null,
+  onFocus: null,
+  onBlur: null,
+  onSubmitEditing: null,
 };
 
 MaskedTextInput.propTypes = {
@@ -82,6 +178,12 @@ MaskedTextInput.propTypes = {
   secureTextEntry: PropTypes.bool,
   maxLength: PropTypes.number,
   maskType: PropTypes.string,
+  customMask: PropTypes.instanceOf(Mask),
+  // Native TextInput events
+  onChangeText: PropTypes.func,
+  onFocus: PropTypes.func,
+  onBlur: PropTypes.func,
+  onSubmitEditing: PropTypes.func,
 };
 
 export default MaskedTextInput;
