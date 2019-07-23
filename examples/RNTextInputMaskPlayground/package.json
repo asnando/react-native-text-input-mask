@@ -12,7 +12,7 @@
   "dependencies": {
     "react": "16.8.6",
     "react-native": "0.60.4",
-    "react-native-text-input-mask": "file:../.."
+    "rn-masked-text-input": "file:../.."
   },
   "devDependencies": {
     "@babel/core": "^7.5.5",

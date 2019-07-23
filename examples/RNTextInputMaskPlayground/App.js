@@ -10,7 +10,7 @@ import {
 import {
   MaskedTextInput,
   CustomMask,
-} from 'react-native-text-input-mask';
+} from 'rn-masked-text-input';
 
 const App = () => {
   const [ref, setRef] = useState(null);
