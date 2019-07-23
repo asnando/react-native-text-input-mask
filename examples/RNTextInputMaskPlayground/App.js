@@ -55,6 +55,11 @@ const App = () => {
             keyboardType="numeric"
             style={styles.input}
           />
+          <MaskedTextInput
+            maskType="date"
+            keyboardType="numeric"
+            style={styles.input}
+          />
           <Text style={styles.label}>Custom</Text>
           <MaskedTextInput
             customMask={myCustomMask}

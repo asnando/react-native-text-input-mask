@@ -20,9 +20,14 @@ class MaskedTextInput extends PureComponent {
   constructor(props) {
     super(props);
     const { value, maskType, customMask } = props;
-    const useMask = customMask || resolveMaskFromList(maskType);
-    if (!useMask) {
-      throw new Error('Could not detect which mask to use.');
+    let useMask;
+    if (customMask) {
+      useMask = customMask;
+    } else {
+      useMask = resolveMaskFromList(maskType);
+      if (!useMask) {
+        throw new Error(`Could not detect mask configuration for "${maskType}" mask type.`);
+      }
     }
     this.state = {
       ...initialState,
