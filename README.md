@@ -3,7 +3,7 @@
 
 # Installation
 ```bash
-npm install react-native-text-input-mask --save
+npm install rn-masked-text-input --save
 ```
 
 # Usage
