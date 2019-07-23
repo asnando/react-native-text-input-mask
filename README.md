@@ -49,7 +49,7 @@ Returns raw(unmasked) value string.
 ```Special characters different from underscores``` will be displayed as separators or as it is, like spaces.
 
 # Supported Mask Types
-Currently supported mask types are: ```phone, cpf, cnpj```
+Currently supported mask types are: ```phone, cpf, cnpj, date, money```
 
 # Custom Mask
 ```jsx

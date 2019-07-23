@@ -55,8 +55,15 @@ const App = () => {
             keyboardType="numeric"
             style={styles.input}
           />
+          <Text style={styles.label}>Date</Text>
           <MaskedTextInput
             maskType="date"
+            keyboardType="numeric"
+            style={styles.input}
+          />
+          <Text style={styles.label}>Money</Text>
+          <MaskedTextInput
+            maskType="money"
             keyboardType="numeric"
             style={styles.input}
           />
