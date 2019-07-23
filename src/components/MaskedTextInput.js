@@ -122,7 +122,7 @@ class MaskedTextInput extends PureComponent {
     return this.setState({
       cursorSelection: updatedCursorSelection,
     }, () => {
-      // ! Could make it change cursor selection only using setTimeout 😞.
+      // ! Could make it change cursor selection only using setTimeout 😐.
       setTimeout(() => {
         textInputRef.setNativeProps({
           selection: updatedCursorSelection,

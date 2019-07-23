@@ -14,13 +14,12 @@ const countCharactersFromString = value => (
   /[A-Za-z0-9]/.test(value) ? value.match(/[A-Za-z0-9]/g).length : 0
 );
 
-const countUnderscoresFromString = value => (
-  /_/.test(value) ? value.match(/_/g).length : 0
-);
-
 const countCharactersFromMask = countCharactersFromString;
 const countCharactersFromMaskedValue = countCharactersFromString;
-const countUnderscoresFromMask = countUnderscoresFromString;
+
+const countOptionCharactersFromString = value => (/\?/.test(value) ? value.match(/\?/g).length : 0);
+
+const countOptionalCharacters = countOptionCharactersFromString;
 
 const maskHaveOptionalCharacters = mask => /\?/.test(mask);
 
@@ -50,19 +49,27 @@ const containsOptionalCharacter = value => /\?/.test(value);
 // underscores from the mask configuration notation.
 const resolveMaskWithValue = (mask, value) => {
   const values = value.split('');
-  return mask.split('').map((maskChar) => {
-    if (containsOptionalCharacter(maskChar)) {
+  const shouldShowOptionalSpaces = containsOptionalCharacter(mask) && (
+    countCharactersFromMaskedValue(value) >= (
+      countCharactersFromMask(mask) - countOptionalCharacters(mask)
+    )
+  );
+  return mask.split('').map((maskChar, index, self) => {
+    const nextChar = self[index + 1];
+    if (containsOptionalCharacter(nextChar) && !shouldShowOptionalSpaces) {
       return null;
     }
     if (containsSpecialCharacters(maskChar)) {
       return maskChar;
     }
     const valueChar = values.shift();
-    if (valueChar === null || typeof valueChar === 'undefined') {
+    if (!containsCharacter(valueChar) || typeof valueChar === 'undefined') {
       return '_';
     }
     return valueChar;
-  }).filter(char => !!char).join('');
+  })
+    .filter(char => char && !containsOptionalCharacter(char))
+    .join('');
 };
 
 const resolveMaskedValue = (mask, value, prevValue, cursorSelection) => {
@@ -83,8 +90,7 @@ const resolveMaskedValue = (mask, value, prevValue, cursorSelection) => {
       }
     }
 
-    // Check again if reached the max mask length after the optional
-    // characters handling.
+    // Check if reached the max mask length after the optional characters handling.
     if (countCharactersFromMaskedValue(value) > countCharactersFromMask(mask)) {
       return prevValue;
     }
@@ -111,12 +117,18 @@ const resolveMaskedValue = (mask, value, prevValue, cursorSelection) => {
         }
         return prevValue;
       }
-      return truncateStringWithUnderscore(maskedValue, deletedIndex);
+      return resolveMaskWithValue(
+        mask,
+        removeSpecialCharactersFromMaskedValue(
+          truncateStringWithUnderscore(maskedValue, deletedIndex),
+        ),
+      );
     }
 
     // If user pasted the value with the same size of the mask.
-    if (containsCharacter(maskedValue)
-      && (countCharactersFromMaskedValue(maskedValue) === countCharactersFromMask(mask))) {
+    if (containsCharacter(maskedValue) && (
+      countCharactersFromMaskedValue(maskedValue) === countCharactersFromMask(mask)
+    )) {
       maskedValue = maskedValue.replace(/(\W)|(_)/g, '');
     }
 

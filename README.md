@@ -38,6 +38,16 @@ const myComponent = () => {
 ## .getValue()
 Returns raw(unmasked) value string.
 
+# Creating a mask
+
+```0``` Represents any digit.
+
+```[A-Z]``` Represents any alphabetic letter.
+
+```?``` Says that the previous character is optional. In that case the ```_(underscore)``` will only show up when the user input the minimun size of characters. For example: A mask as ```(000?) 0``` will be initialized as ```(__) _``` and when user input the minimun 3 digits it will display the optional(s) like ```(00_) 0```.
+
+```Special characters different from underscores``` will be displayed as separators or as it is, like spaces.
+
 # Supported Mask Types
 Currently supported mask types are: ```phone, cpf, cnpj```
 

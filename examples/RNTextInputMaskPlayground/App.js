@@ -24,11 +24,11 @@ const App = () => {
     }
   };
 
-  const onChangeText = value => console.warn(value);
+  const onChangeText = value => console.log(`onChangeText with value "${value}"`);
 
   const myCustomMask = new CustomMask({
     name: 'myCustomMask',
-    mask: '(000) - 000',
+    mask: '(0?00) - 000',
   });
 
   return (
