@@ -1,6 +1,6 @@
 {
   "name": "rn-masked-text-input",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "🎭 Always on masked text input React Native component.",
   "main": "src/index.js",
   "repository": "https://github.com/ffrm/react-native-text-input-mask.git",
