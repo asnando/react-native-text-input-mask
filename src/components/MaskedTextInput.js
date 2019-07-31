@@ -56,6 +56,10 @@ class MaskedTextInput extends PureComponent {
     return mask.getValue(value);
   }
 
+  clear() {
+    return this.handleChangeText(initialState.value, false);
+  }
+
   handleChangeText(text, notify = true) {
     const { mask, value: prevValue, cursorSelection } = this.state;
     const { onChangeText } = this.props;

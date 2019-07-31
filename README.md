@@ -38,6 +38,9 @@ const myComponent = () => {
 ## .getValue()
 Returns raw(unmasked) value string.
 
+## .clear()
+Clears the value of the component.
+
 # Creating a mask
 
 ```0``` Represents any digit.
