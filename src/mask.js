@@ -166,8 +166,20 @@ const resolveMaskedValue = (mask, value, prevValue, cursorSelection) => {
 const getRawValue = value => value.replace(/(\W|_|\s)/g, '');
 
 class Mask {
-  constructor({ name, mask }) {
-    Object.assign(this, { name, mask });
+  constructor({ name, mask, validator }) {
+    Object.assign(this, {
+      name,
+      mask,
+      validator,
+    });
+  }
+
+  validate(value) {
+    const { validator } = this;
+    if (typeof validator === 'function') {
+      return validator(this.getValue(value));
+    }
+    return true;
   }
 
   // eslint-disable-next-line class-methods-use-this

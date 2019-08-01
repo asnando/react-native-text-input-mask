@@ -19,7 +19,12 @@ const initialState = {
 class MaskedTextInput extends PureComponent {
   constructor(props) {
     super(props);
-    const { value, maskType, customMask } = props;
+    const {
+      value,
+      maskType,
+      customMask,
+    } = props;
+
     let useMask;
     if (customMask) {
       useMask = customMask;
@@ -54,6 +59,11 @@ class MaskedTextInput extends PureComponent {
   getValue() {
     const { value, mask } = this.state;
     return mask.getValue(value);
+  }
+
+  validate() {
+    const { value, mask } = this.state;
+    return mask.validate(value);
   }
 
   clear() {

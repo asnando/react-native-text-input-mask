@@ -38,6 +38,9 @@ const myComponent = () => {
 ## .getValue()
 Returns raw(unmasked) value string.
 
+## .validate()
+Return a boolean telling if current state value of the input is valid against the mask ```validator``` prop function.
+
 ## .clear()
 Clears the value of the component.
 
@@ -67,7 +70,8 @@ import { MaskedTextInput, CustomMask } from 'react-native-text-input-mask';
 const myComponent = () => {
   const myCustomMask = new CustomMask({
     name: 'myCustomMask',
-    mask: '(000) 000-000'
+    mask: '(000) 000-000',
+    validator: value => value === '123456789',
   });
   return (
     <View>

@@ -13,22 +13,22 @@ import {
 } from 'rn-masked-text-input';
 
 const App = () => {
-  const [ref, setRef] = useState(null);
-  const [value, setValue] = useState(value);
+  const refs = [];
 
-  const saveInputRef = ref => setRef(ref);
-
-  const getInputValue = () => {
-    if (ref) {
-      console.log(ref.getValue());
-    }
+  const saveInputRef = ref => {
+    refs.push(ref);
   };
 
-  const onChangeText = value => console.log(`onChangeText with value "${value}"`);
+  const getInputsValues = () => {
+    const fieldWithCustomMask = refs[refs.length - 1];
+    console.log('Field with custom mask is valid:', fieldWithCustomMask.validate());
+    refs.forEach(ref => console.log(ref.getValue()));
+  };
 
   const myCustomMask = new CustomMask({
     name: 'myCustomMask',
     mask: '(0?00) - 000',
+    validator: value => value === '111111',
   });
 
   return (
@@ -42,30 +42,35 @@ const App = () => {
             secureTextEntry={false}
             maskType="phone"
             style={styles.input}
+            ref={saveInputRef}
           />
           <Text style={styles.label}>CNPJ</Text>
           <MaskedTextInput
             maskType="cnpj"
             keyboardType="numeric"
             style={styles.input}
+            ref={saveInputRef}
           />
           <Text style={styles.label}>CPF</Text>
           <MaskedTextInput
             maskType="cpf"
             keyboardType="numeric"
             style={styles.input}
+            ref={saveInputRef}
           />
           <Text style={styles.label}>Date</Text>
           <MaskedTextInput
             maskType="date"
             keyboardType="numeric"
             style={styles.input}
+            ref={saveInputRef}
           />
           <Text style={styles.label}>Money</Text>
           <MaskedTextInput
             maskType="money"
             keyboardType="numeric"
             style={styles.input}
+            ref={saveInputRef}
           />
           <Text style={styles.label}>Custom</Text>
           <MaskedTextInput
@@ -73,9 +78,8 @@ const App = () => {
             keyboardType="numeric"
             style={styles.input}
             ref={saveInputRef}
-            onChangeText={onChangeText}
           />
-          <Button title="GetValue" onPress={getInputValue} />
+          <Button title="Show Values" onPress={getInputsValues} />
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -96,12 +100,12 @@ const styles = StyleSheet.create({
     marginRight: 'auto',
   },
   input: {
-    fontSize: 20,
+    fontSize: 16,
     color: 'gray',
   },
   label: {
     width: '100%',
-    fontSize: 24,
+    fontSize: 20,
     paddingTop: 16,
     paddingBottom: 8,
   },
