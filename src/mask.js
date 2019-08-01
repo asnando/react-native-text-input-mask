@@ -45,6 +45,12 @@ const whichIndexWasRemovedFromString = (value, prevValue) => {
 const containsSpecialCharacters = value => /\W/.test(value);
 const containsOptionalCharacter = value => /\?/.test(value);
 
+const isDef = value => (value !== null && typeof value !== 'undefined');
+const isNumber = char => /[0-9]/.test(char);
+const isLetter = char => /[A-Za-z]/.test(char);
+// eslint-disable-next-line no-nested-ternary
+const getCharType = char => (isNumber(char) ? 'number' : isLetter(char) ? 'letter' : null);
+
 // This will distribute every character or digit into the respectives respecting the
 // underscores from the mask configuration notation.
 const resolveMaskWithValue = (mask, value) => {
@@ -63,9 +69,15 @@ const resolveMaskWithValue = (mask, value) => {
       return maskChar;
     }
     const valueChar = values.shift();
-    if (!containsCharacter(valueChar) || typeof valueChar === 'undefined') {
-      return '_';
-    }
+    if (
+      // If not a character
+      !containsCharacter(valueChar)
+      // If not defined
+      || !isDef(valueChar)
+      // If the char type from mask and the char type inputed
+      // by the user does mismatch.
+      || (isDef(valueChar) && getCharType(maskChar) !== getCharType(valueChar))
+    ) return '_';
     return valueChar;
   })
     .filter(char => char && !containsOptionalCharacter(char))

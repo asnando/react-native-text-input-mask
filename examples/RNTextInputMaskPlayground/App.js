@@ -27,8 +27,8 @@ const App = () => {
 
   const myCustomMask = new CustomMask({
     name: 'myCustomMask',
-    mask: '(0?00) - 000',
-    validator: value => value === '111111',
+    mask: '(0?00) - 00A',
+    validator: value => value === /^\d{6}[a-zA-Z]{1}$/.test(value),
   });
 
   return (
