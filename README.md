@@ -41,6 +41,12 @@ Returns raw(unmasked) value string.
 ## .clear()
 Clears the value of the component.
 
+## .focus()
+Native focus on TextInput component.
+
+## .blur()
+Native blur on TextInput component.
+
 # Creating a mask
 
 ```0``` Represents any digit.
@@ -74,4 +80,4 @@ const myComponent = () => {
 # Examples
 See the ```examples/RNTextInputMaskPlayground``` app and play with it.
 
-![react-native-text-input-mask-example](https://user-images.githubusercontent.com/33915907/61661114-bfdaa400-aca1-11e9-9c2a-432d6b7b37e4.gif)
+<img src="https://user-images.githubusercontent.com/33915907/61661114-bfdaa400-aca1-11e9-9c2a-432d6b7b37e4.gif" width="213" height="427" />

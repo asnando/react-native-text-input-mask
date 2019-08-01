@@ -144,6 +144,16 @@ class MaskedTextInput extends PureComponent {
     this.textInputRef = ref;
   }
 
+  focus() {
+    const { textInputRef } = this;
+    return textInputRef.focus();
+  }
+
+  blur() {
+    const { textInputRef } = this;
+    return textInputRef.blur();
+  }
+
   render() {
     const {
       value,
